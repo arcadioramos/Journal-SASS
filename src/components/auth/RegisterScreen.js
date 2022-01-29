@@ -2,11 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from '../../hooks/useForm';
 import validator from 'validator'
-import { useDispatch } from 'react-redux';
 import { uiReducer } from '../../reducers/uiReducer';
+import { useDispatch, useSelector } from 'react-redux';
 import { removeError, setError } from '../../actions/ui';
+import { startRegisterWithEmailPasswordName } from '../../actions/auth';
 export const RegisterScreen = () => {
-
+    const dispatch = useDispatch();
+    const {msgError} = useSelector(state => state.ui);
+    
     /*
      {
          name: 'arcadio',
@@ -25,16 +28,16 @@ export const RegisterScreen = () => {
     })
 
     const { name, email, password, password2 } = formValues;
-    const dispatch = useDispatch();
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (isFormValid()) {
-            console.log('Formulario correcto')
+            dispatch(startRegisterWithEmailPasswordName(email,password,name));  
         }
     }
 
-    const isFormValid = () => { 
+    const isFormValid = () => {
         if (name.trim().length === 0) {
             dispatch(setError('name is required'))
             return false;
@@ -45,7 +48,7 @@ export const RegisterScreen = () => {
             dispatch(setError('password should be at least 6 characters and match each other'))
             return false;
         }
-        
+
         dispatch(removeError())
         return true;
     }
@@ -55,9 +58,12 @@ export const RegisterScreen = () => {
             <h3 className="auth__title">Register</h3>
 
             <form onSubmit={handleSubmit}>
+                {msgError &&
+
                 <div className="auth__alert-error">
-                    Hola mundo
+                    {msgError}
                 </div>
+                }
 
                 <input
                     type="text"
@@ -101,6 +107,7 @@ export const RegisterScreen = () => {
                 <button
                     type="submit"
                     className="btn btn-primary btn-block mb-5"
+                    
                 >
                     Register
                 </button>
